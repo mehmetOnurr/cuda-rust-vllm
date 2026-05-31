@@ -1,0 +1,10 @@
+*.i
+*.ii
+*.gpu
+*.ptx
+*.cubin
+*.fatbin
+*.exe
+code_base
+code_base/**
+*.exp
