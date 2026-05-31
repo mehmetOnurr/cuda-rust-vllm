@@ -1,0 +1,11 @@
+FROM vllm/vllm-openai:latest
+
+WORKDIR /workspace
+
+# İstersen ekstra paketler
+RUN pip install --no-cache-dir \
+    huggingface_hub \
+    accelerate
+
+# Container içine girip elle çalıştıracağın için default shell açalım
+ENTRYPOINT ["/bin/bash"]

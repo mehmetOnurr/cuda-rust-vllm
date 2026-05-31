@@ -1,0 +1,16 @@
+services:
+  ml-server:
+    image: nvidia/cuda:12.1.0-base-ubuntu22.04
+    command: bash -c "nvidia-smi && tail -f /dev/null"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+    - /d/codes/kisisel_projects/cuda_rust/code_base:/mnt/code_base
+
+volumes:
+  code_base:
