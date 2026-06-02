@@ -2,10 +2,16 @@ FROM vllm/vllm-openai:latest
 
 WORKDIR /workspace
 
-# İstersen ekstra paketler
-RUN pip install --no-cache-dir \
-    huggingface_hub \
+ENV PYTHONUNBUFFERED=1 \
+    HF_HOME=/root/.cache/huggingface \
+    TRANSFORMERS_CACHE=/root/.cache/huggingface \
+    HF_HUB_ENABLE_HF_TRANSFER=1 \
+    VLLM_WORKER_MULTIPROC_METHOD=spawn
+
+RUN python3 -m pip install --no-cache-dir \
+    "huggingface_hub[hf_transfer]" \
     accelerate
 
-# Container içine girip elle çalıştıracağın için default shell açalım
+EXPOSE 8000
+
 ENTRYPOINT ["/bin/bash"]

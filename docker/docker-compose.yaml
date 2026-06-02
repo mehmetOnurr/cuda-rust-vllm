@@ -1,7 +1,33 @@
 services:
-  ml-server:
-    image: nvidia/cuda:12.1.0-base-ubuntu22.04
-    command: bash -c "nvidia-smi && tail -f /dev/null"
+  vllm:
+    image: test-vllm-rtx4060:v1.0.0
+    container_name: vllm-gpu
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ../models:/workspace/models
+      - ../hf-cache:/root/.cache/huggingface
+      - ../code_base:/workspace/code_base
+
+    environment:
+      HF_HOME: /root/.cache/huggingface
+      TRANSFORMERS_CACHE: /root/.cache/huggingface
+      HF_HUB_ENABLE_HF_TRANSFER: "1"
+      VLLM_WORKER_MULTIPROC_METHOD: spawn
+
+      # GPU visibility
+      CUDA_VISIBLE_DEVICES: "0"
+      NVIDIA_VISIBLE_DEVICES: "0"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,utility"
+
+      # debug için faydalı
+      VLLM_LOGGING_LEVEL: "DEBUG"
+
+    # NVIDIA GPU
+    runtime: nvidia
+
     deploy:
       resources:
         reservations:
@@ -9,8 +35,8 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-    volumes:
-    - /d/codes/kisisel_projects/cuda_rust/code_base:/mnt/code_base
 
-volumes:
-  code_base:
+    shm_size: "8gb"
+    stdin_open: true
+    tty: true
+    entrypoint: ["/bin/bash"]
